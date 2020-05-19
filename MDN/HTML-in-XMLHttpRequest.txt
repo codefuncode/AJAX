@@ -1,0 +1,13 @@
+https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/HTML_in_XMLHttpRequest
+
+La especificación W3C XMLHttpRequest agrega compatibilidad con el análisis HTML a XMLHttpRequest, que originalmente solo admitía el análisis XML. Esta característica permite que las aplicaciones web obtengan un recurso HTML como un DOM analizado utilizando XMLHttpRequest.
+
+Para obtener una descripción general de cómo usar XMLHttpRequest en general, consulte Uso de XMLHttpRequest.
+
+Limitaciones
+
+Para desalentar el uso sincrónico de XMLHttpRequest, el soporte HTML no está disponible en el modo sincrónico. Además, el soporte HTML solo está disponible si la propiedad responseType se ha establecido en 'documento'. Esta limitación evita perder tiempo analizando HTML inútilmente cuando el código heredado usa XMLHttpRequest en el modo predeterminado para recuperar responseText para recursos de texto / html. Además, esta limitación evita problemas con el código heredado que supone que responseXML es nulo para las páginas de error HTTP (que a menudo tienen un cuerpo de respuesta text / html).
+
+Uso
+
+Recuperar un recurso HTML como DOM usando XMLHttpRequest funciona igual que recuperar un recurso XML como DOM usando XMLHttpRequest, excepto que no puede usar el modo síncrono y tiene que solicitar explícitamente un documento asignando la cadena 'documento' a la propiedad responseType del objeto XMLHttpRequest después de llamar a open () pero antes de llamar a send ().

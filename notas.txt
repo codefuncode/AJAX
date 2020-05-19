@@ -1,0 +1,15 @@
+
+
+
+Uso de Ajax 
+
+https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+
+Objeto 
+
+https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
+
+
+https://xhr.spec.whatwg.org/
+
+Lectura  en curso  Usando-XMLHttpRequest

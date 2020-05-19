@@ -1,0 +1,124 @@
+
+================================================================
+https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
+================================================================
+
+Utilice objetos XMLHttpRequest (XHR) para interactuar con los servidores. Puede recuperar datos de una URL sin tener que actualizar la página completa. Esto permite que una página web actualice solo una parte de una página sin interrumpir lo que el usuario está haciendo. XMLHttpRequest se usa mucho en la programación AJAX.
+
+A pesar de su nombre, XMLHttpRequest puede usarse para recuperar cualquier tipo de datos, no solo XML.
+
+Si su comunicación necesita involucrar la recepción de datos de eventos o datos de mensajes de un servidor, considere usar eventos enviados por el servidor a través de la interfaz EventSource. Para la comunicación full-duplex, WebSockets puede ser una mejor opción.
+
+Constructor
+
+XMLHttpRequest ()
+    El constructor inicializa una XMLHttpRequest. Debe llamarse antes que cualquier otro método llame.
+
+Propiedades
+
+Esta interfaz también hereda las propiedades de XMLHttpRequestEventTarget y de EventTarget.
+
+XMLHttpRequest.onreadystatechange
+    Un EventHandler que se llama cada vez que cambia el atributo readyState.
+XMLHttpRequest.readyState Solo lectura
+    Devuelve un corto sin signo, el estado de la solicitud.
+XMLHttpRequest.response Solo lectura
+    Devuelve un objeto ArrayBuffer, Blob, Document, JavaScript o DOMString, según el valor de XMLHttpRequest.responseType, que contiene el cuerpo de la entidad de respuesta.
+XMLHttpRequest.responseText Solo lectura
+    Devuelve un DOMString que contiene la respuesta a la solicitud como texto, o nulo si la solicitud no tuvo éxito o aún no se ha enviado.
+XMLHttpRequest.responseType
+    Es un valor enumerado que define el tipo de respuesta.
+XMLHttpRequest.responseURL Solo lectura
+    Devuelve la URL serializada de la respuesta o la cadena vacía si la URL es nula.
+XMLHttpRequest.responseXML Solo lectura
+    Devuelve un documento que contiene la respuesta a la solicitud, o nulo si la solicitud no tuvo éxito, aún no se ha enviado o no se puede analizar como XML o HTML. No disponible en trabajadores.
+XMLHttpRequest.status Solo lectura
+    Devuelve un corto sin firmar con el estado de la respuesta de la solicitud.
+XMLHttpRequest.statusText Solo lectura
+    Devuelve una DOMString que contiene la cadena de respuesta devuelta por el servidor HTTP. A diferencia de XMLHttpRequest.status, esto incluye el texto completo del mensaje de respuesta ('200 OK', por ejemplo).
+
+Nota: De acuerdo con la especificación HTTP / 2 (8.1.2.4 Campos de pseudo encabezado de respuesta), HTTP / 2 no define una forma de transportar la versión o la frase de razón que se incluye en una línea de estado HTTP / 1.1.
+
+XMLHttpRequest.timeout
+    Es un largo sin signo que representa el número de milisegundos que puede tomar una solicitud antes de finalizar automáticamente.
+XMLHttpRequestEventTarget.ontimeout
+    Es un EventHandler que se llama cada vez que se agota el tiempo de espera de la solicitud.
+XMLHttpRequest.upload Solo lectura
+    Es un XMLHttpRequestUpload, que representa el proceso de carga.
+XMLHttpRequest.withCredentials
+    Es un booleano que indica si las solicitudes de control de acceso a través del sitio deben realizarse utilizando credenciales como cookies o encabezados de autorización.
+
+Propiedades no estándar
+
+Solo XMLHttpRequest.channelRead
+    Es un nsIChannel. El canal utilizado por el objeto al realizar la solicitud.
+Solo XMLHttpRequest.mozAnonRead
+    Es un booleano. Si es verdadero, la solicitud se enviará sin cookies y encabezados de autenticación.
+Solo XMLHttpRequest.mozSystemRead
+    Es un booleano. Si es cierto, la misma política de origen no se aplicará en la solicitud.
+XMLHttpRequest.mozBackgroundRequest
+    Es un booleano. Indica si el objeto representa o no una solicitud de servicio en segundo plano.
+XMLHttpRequest.mozResponseArrayBuffer Obsoleto desde Gecko 6 Solo lectura
+    ArrayBuffer. La respuesta a la solicitud, como una matriz con tipo JavaScript.
+XMLHttpRequest.multipartObsolete desde Gecko 22
+    Esta característica exclusiva de Gecko, un booleano, se eliminó en Firefox / Gecko 22. Utilice en su lugar Eventos enviados por el servidor, Web Sockets o responseText de los eventos de progreso.
+
+Controladores de eventos
+
+onreadystatechange como propiedad de la instancia XMLHttpRequest es compatible con todos los navegadores.
+
+Desde entonces, se han implementado varios controladores de eventos adicionales en varios navegadores (onload, onerror, onprogress, etc.). Consulte Uso de XMLHttpRequest.
+
+Los navegadores más recientes, incluido Firefox, también admiten escuchar los eventos XMLHttpRequest a través de las API estándar addEventListener () además de establecer las propiedades * en una función de controlador.
+Métodos
+
+XMLHttpRequest.abort ()
+    Anula la solicitud si ya se ha enviado.
+XMLHttpRequest.getAllResponseHeaders ()
+    Devuelve todos los encabezados de respuesta, separados por CRLF, como una cadena o nulo si no se ha recibido respuesta.
+XMLHttpRequest.getResponseHeader ()
+    Devuelve la cadena que contiene el texto del encabezado especificado, o nulo si la respuesta aún no se ha recibido o el encabezado no existe en la respuesta.
+XMLHttpRequest.open ()
+    Inicializa una solicitud.
+XMLHttpRequest.overrideMimeType ()
+    Invalida el tipo MIME devuelto por el servidor.
+XMLHttpRequest.send ()
+    Envía la solicitud. Si la solicitud es asíncrona (que es la predeterminada), este método vuelve tan pronto como se envía la solicitud.
+XMLHttpRequest.setRequestHeader ()
+    Establece el valor de un encabezado de solicitud HTTP. Debe llamar a setRequestHeader () después de open (), pero antes de enviar ().
+
+Métodos no estándar
+
+XMLHttpRequest.init ()
+    Inicializa el objeto para su uso desde el código C ++.
+
+Advertencia: este método no debe llamarse desde JavaScript.
+
+XMLHttpRequest.openRequest ()
+    Inicializa una solicitud. Este método se utilizará a partir del código nativo; para inicializar una solicitud del código JavaScript, use open () en su lugar. Consulte la documentación de open ().
+XMLHttpRequest.sendAsBinary ()
+    Una variante del método send () que envía datos binarios.
+
+Eventos
+
+abortar
+    Se activa cuando se cancela una solicitud, por ejemplo, porque el programa llamó a XMLHttpRequest.abort ().
+    También disponible a través de la propiedad onabort.
+error
+    Se dispara cuando la solicitud encuentra un error.
+    También disponible a través de la propiedad onerror.
+carga
+    Se activa cuando una transacción XMLHttpRequest se completa con éxito.
+    También disponible a través de la propiedad onload.
+loadend
+    Se dispara cuando se completa una solicitud, ya sea con éxito (después de la carga) o sin éxito (después de cancelar o error).
+    También disponible a través de la propiedad onloadend.
+carga de arranque
+    Se activa cuando una solicitud ha comenzado a cargar datos.
+    También disponible a través de la propiedad onloadstart.
+Progreso
+    Se dispara periódicamente cuando una solicitud recibe más datos.
+    También disponible a través de la propiedad onprogress.
+se acabó el tiempo
+    Se dispara cuando finaliza el progreso debido al vencimiento del tiempo preestablecido.
+    También disponible a través de la propiedad ontimeout.

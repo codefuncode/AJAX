@@ -1,0 +1,157 @@
+https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+
+
+En esta guía, veremos cómo usar XMLHttpRequest para emitir solicitudes HTTP para intercambiar datos entre el sitio web y un servidor. Se incluyen ejemplos de casos de uso comunes y más oscuros para XMLHttpRequest.
+
+Para enviar una solicitud HTTP, cree un objeto XMLHttpRequest, abra una URL y envíe la solicitud. Una vez que se complete la transacción, el objeto contendrá información útil, como el cuerpo de la respuesta y el estado HTTP del resultado.
+
+
+
+Tipos de solicitudes
+
+Una solicitud realizada a través de XMLHttpRequest puede recuperar los datos de una de dos maneras, asíncrona o sincrónicamente. El tipo de solicitud está dictado por el argumento asíncrono opcional (el tercer argumento) que se establece en el método XMLHttpRequest.open (). Si este argumento es verdadero o no se especifica, XMLHttpRequest se procesa de forma asincrónica; de lo contrario, el proceso se maneja de forma sincrónica. Puede encontrar una discusión detallada y demostraciones de estos dos tipos de solicitudes en la página de solicitudes síncronas y asíncronas. No use solicitudes sincrónicas fuera de Web Workers.
+
+Manejo de respuestas
+
+Hay varios tipos de atributos de respuesta definidos por la especificación de estándar de vida para el constructor XMLHttpRequest (). Estos le dicen al cliente que realiza la solicitud XMLHttpRequest información importante sobre el estado de la respuesta. Algunos casos en los que tratar con tipos de respuesta que no son de texto pueden involucrar cierta manipulación y análisis se describen en las siguientes secciones.
+
+Analizando y manipulando la propiedad responseXML
+
+Si utiliza XMLHttpRequest para obtener el contenido de un documento XML remoto, la propiedad responseXML será un objeto DOM que contendrá un documento XML analizado. Esto podría resultar difícil de manipular y analizar. Hay cuatro formas principales de analizar este documento XML:
+
+    Usando XPath para abordar (o señalar) partes de él.
+    Análisis y serialización manual de XML a cadenas u objetos.
+    Usando XMLSerializer para serializar árboles DOM en cadenas o archivos.
+    RegExp se puede usar si siempre conoce el contenido del documento XML de antemano. Es posible que desee eliminar los saltos de línea, si utiliza RegExp para escanear con respecto a los saltos de línea. Sin embargo, este método es un 'último recurso' ya que si el código XML cambia ligeramente, el método probablemente fallará.
+
+Nota: XMLHttpRequest ahora puede interpretar HTML por usted utilizando la propiedad responseXML. Lea el artículo sobre HTML en XMLHttpRequest para aprender cómo hacer esto.
+
+Manejo de datos binarios
+
+Aunque XMLHttpRequest se usa más comúnmente para enviar y recibir datos de texto, se puede usar para enviar y recibir contenido binario. Existen varios métodos bien probados para obligar a la respuesta de una solicitud XMLHttpRequest a enviar datos binarios. Estos implican utilizar el método overrideMimeType () en el objeto XMLHttpRequest y es una solución viable.
+
+Sin embargo, hay técnicas más modernas disponibles, ya que el atributo responseType ahora admite varios tipos de contenido adicionales, lo que hace que enviar y recibir datos binarios sea mucho más fácil.
+
+Por ejemplo, considere este fragmento, que usa el responseType de 'arraybuffer' para recuperar el contenido remoto en un objeto ArrayBuffer, que almacena los datos binarios sin procesar.
+
+Monitoreo del progreso
+
+XMLHttpRequest proporciona la capacidad de escuchar varios eventos que pueden ocurrir mientras se procesa la solicitud. Esto incluye notificaciones periódicas de progreso, notificaciones de error, etc.
+
+El soporte para el monitoreo de eventos de progreso DOM de las transferencias XMLHttpRequest sigue la especificación para eventos de progreso: estos eventos implementan la interfaz ProgressEvent. Los eventos reales que puede monitorear para determinar el estado de una transferencia en curso son:
+
+Progreso
+    La cantidad de datos que se ha recuperado ha cambiado.
+carga
+    La transferencia está completa; todos los datos están ahora en la respuesta
+
+
+Las líneas 3-6 agregan oyentes de eventos para los diversos eventos que se envían mientras se realiza una transferencia de datos utilizando XMLHttpRequest.
+Nota: Debe agregar los escuchas de eventos antes de llamar a open () en la solicitud. De lo contrario, los eventos de progreso no se dispararán.
+
+El controlador de eventos de progreso, especificado por la función updateProgress () en este ejemplo, recibe el número total de bytes para transferir, así como el número de bytes transferidos hasta ahora en los campos totales y cargados del evento. Sin embargo, si el campo lengthComputable es falso, la longitud total no se conoce y será cero.
+
+Existen eventos de progreso para las transferencias de carga y descarga. Los eventos de descarga se activan en el objeto XMLHttpRequest en sí, como se muestra en el ejemplo anterior. Los eventos de carga se activan en el objeto XMLHttpRequest.upload, como se muestra a continuación:
+
+
+Nota: Los eventos de progreso no están disponibles para el archivo: protocolo.
+
+Nota: a partir de Gecko 9.0, ahora se puede confiar en los eventos de progreso para cada porción de datos recibidos, incluida la última porción en los casos en que se recibe el último paquete y se cierra la conexión antes de que se active el evento de progreso. En este caso, el evento de progreso se activa automáticamente cuando se produce el evento de carga para ese paquete. Esto le permite ahora monitorear de manera confiable el progreso solo observando el evento 'progreso'.
+
+Nota: A partir de Gecko 12.0, si su evento de progreso se llama con un responseType de 'moz-blob', el valor de respuesta es un Blob que contiene los datos recibidos hasta ahora.
+
+También se pueden detectar las tres condiciones de finalización de carga (aborto, carga o error) utilizando el evento loadend:
+
+
+==================================================================================================
+
+Enviar formularios y subir archivos
+
+Las instancias de XMLHttpRequest se pueden usar para enviar formularios de dos maneras:
+
+    usando solo AJAX
+    utilizando la API FormData
+
+El uso de FormData API es el más simple y rápido, pero tiene la desventaja de que los datos recopilados no pueden ser encadenados.
+Usar solo AJAX es más complejo, pero generalmente más flexible y potente.
+Usando nada más que XMLHttpRequest
+
+El envío de formularios sin la API FormData no requiere otras API para la mayoría de los casos de uso. El único caso en el que necesita una API adicional es si desea cargar uno o más archivos, donde utiliza la API FileReader.
+Una breve introducción a los métodos de envío.
+
+Se puede enviar un formulario html de cuatro maneras:
+
+    utilizando el método POST y configurando el atributo enctype en application / x-www-form-urlencoded (predeterminado);
+    usando el método POST y configurando el atributo enctype en text / plain;
+    usando el método POST y configurando el atributo enctype en multipart / form-data;
+    utilizando el método GET (en este caso, se ignorará el atributo enctype).
+
+Ahora, considere la posibilidad de enviar un formulario que contenga solo dos campos, llamado foo y baz. Si está utilizando el método POST, el servidor recibirá una cadena similar a uno de los siguientes tres ejemplos, según el tipo de codificación que esté utilizando:
+
+A brief introduction to the submit methods
+
+An html <form> can be sent in four ways:
+
+    using the POST method and setting the enctype attribute to application/x-www-form-urlencoded (default);
+    using the POST method and setting the enctype attribute to text/plain;
+    using the POST method and setting the enctype attribute to multipart/form-data;
+    using the GET method (in this case the enctype attribute will be ignored).
+
+Now, consider the submission of a form containing only two fields, named foo and baz. If you are using the POST method the server will receive a string similar to one of the following three examples, depending on the encoding type you are using:
+
+
+
+    Method: POST; Encoding type: application/x-www-form-urlencoded (default):
+
+    Content-Type: application/x-www-form-urlencoded
+
+    foo=bar&baz=The+first+line.%0D%0AThe+second+line.%0D%0A
+
+    Method: POST; Encoding type: text/plain:
+
+    Content-Type: text/plain
+
+    foo=bar
+    baz=The first line.
+    The second line.
+
+    Method: POST; Encoding type: multipart/form-data:
+
+    Content-Type: multipart/form-data; boundary=---------------------------314911788813839
+
+    -----------------------------314911788813839
+    Content-Disposition: form-data; name="foo"
+
+    bar
+    -----------------------------314911788813839
+    Content-Disposition: form-data; name="baz"
+
+    The first line.
+    The second line.
+
+    -----------------------------314911788813839--
+
+However, if you are using the GET method, a string like the following will be simply added to the URL:
+
+?foo=bar&baz=The%20first%20line.%0AThe%20second%20line.
+
+
+========================================================================================================
+
+Un pequeño marco de vainilla
+
+Todos estos efectos los realiza automáticamente el navegador web cada vez que envía un formulario. Si desea realizar los mismos efectos usando JavaScript, debe instruir al intérprete sobre todo. Por lo tanto, cómo enviar formularios en AJAX puro es demasiado complejo para explicarlo aquí en detalle. Por esta razón, aquí colocamos un marco completo (pero didáctico), capaz de utilizar las cuatro formas de enviar y cargar archivos:
+
+La sintaxis para activar este script es simplemente:
+
+AJAXSubmit (myForm);
+
+Nota: Este marco utiliza la API FileReader para transmitir cargas de archivos. Esta es una API reciente y no está implementada en IE9 o inferior. Por esta razón, la carga solo de AJAX se considera una técnica experimental. Si no necesita cargar archivos binarios, este marco funciona bien en la mayoría de los navegadores.
+Nota: La mejor manera de enviar contenido binario es a través de ArrayBuffers o Blobs en conjunción con el método send () y posiblemente el método readAsArrayBuffer () de la API FileReader. Pero, dado que el objetivo de este script es trabajar con datos sin procesar que se pueden clasificar en cadena, utilizamos el método sendAsBinary () junto con el método readAsBinaryString () de la API FileReader. Como tal, el script anterior solo tiene sentido cuando se trata de archivos pequeños. Si no tiene la intención de cargar contenido binario, considere usar la API FormData.
+Nota: El método sendAsBinary no estándar se considera obsoleto a partir de Gecko 31 (Firefox 31 / Thunderbird 31 / SeaMonkey 2.28) y se eliminará pronto. En su lugar, se puede utilizar el método de envío estándar (datos de blob).
+
+
+*******
+Usar objetos FormData
+
+El constructor FormData le permite compilar un conjunto de pares clave / valor para enviar utilizando XMLHttpRequest. Su uso principal es el envío de datos de formulario, pero también se puede usar independientemente de un formulario para transmitir datos con clave de usuario. Los datos transmitidos están en el mismo formato que el método submit () del formulario utiliza para enviar datos, si el tipo de codificación del formulario se estableció en 'multipart / form-data'. Los objetos FormData se pueden utilizar de varias maneras con un XMLHttpRequest. Para ver ejemplos y explicaciones sobre cómo se puede utilizar FormData con XMLHttpRequests, consulte la página Uso de objetos FormData. Para fines didácticos, aquí hay una traducción del ejemplo anterior transformada para usar la API FormData. Tenga en cuenta la brevedad del código:
