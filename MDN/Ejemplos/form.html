@@ -1,0 +1,180 @@
+<!DOCTYPE doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" http-equiv="Content-Type"/>
+    <title>
+      Sending forms with FormData – MDN
+    </title>
+    <script>
+      "use strict";
+
+function ajaxSuccess () {
+  console.log(this.responseText);
+}
+
+function AJAXSubmit (oFormElement) {
+
+  if (!oFormElement.action) { return; }
+
+  var oReq = new XMLHttpRequest();
+  
+  oReq.onload = ajaxSuccess;
+
+  if (oFormElement.method.toLowerCase() === "post") {
+
+    oReq.open("post", oFormElement.action);
+
+    oReq.send(new FormData(oFormElement));
+
+  } else {
+
+    var oField, sFieldType, nFile, sSearch = "";
+
+    for (var nItem = 0; nItem < oFormElement.elements.length; nItem++) {
+
+      oField = oFormElement.elements[nItem];
+
+      if (!oField.hasAttribute("name")) { continue; }
+
+      sFieldType = oField.nodeName.toUpperCase() === "INPUT" ? oField.getAttribute("type").toUpperCase() : "TEXT";
+     
+      if (sFieldType === "FILE") {
+
+        for (nFile = 0; nFile < oField.files.length;  
+        	sSearch += "&" + escape(oField.name) + "=" + escape(oField.files[nFile++].name));
+
+      } else if ((sFieldType !== "RADIO" && sFieldType !== "CHECKBOX") || oField.checked) {
+
+        sSearch += "&" + escape(oField.name) + "=" + escape(oField.value);
+      }
+    }
+    oReq.open("get", oFormElement.action.replace(/(?:\?.*)?$/, sSearch.replace(/^&/, "?")), true);
+
+    oReq.send(null);
+  }
+}
+    </script>
+  </head>
+  <body>
+    <h1>
+      Sending forms with FormData
+    </h1>
+    <h2>
+      Using the GET method
+    </h2>
+    <form action="register.php" method="get" onsubmit="AJAXSubmit(this); return false;">
+      <fieldset>
+        <legend>
+          Registration example
+        </legend>
+        <p>
+          First name:
+          <input name="firstname" type="text"/>
+          <br/>
+          Last name:
+          <input name="lastname" type="text"/>
+        </p>
+        <p>
+          <input type="submit" value="Submit"/>
+        </p>
+      </fieldset>
+    </form>
+    <h2>
+      Using the POST method
+    </h2>
+    <h3>
+      Enctype: application/x-www-form-urlencoded (default)
+    </h3>
+    <form action="register.php" method="post" onsubmit="AJAXSubmit(this); return false;">
+      <fieldset>
+        <legend>
+          Registration example
+        </legend>
+        <p>
+          First name:
+          <input name="firstname" type="text"/>
+          <br/>
+          Last name:
+          <input name="lastname" type="text"/>
+        </p>
+        <p>
+          <input type="submit" value="Submit"/>
+        </p>
+      </fieldset>
+    </form>
+    <h3>
+      Enctype: text/plain
+    </h3>
+    <p>
+      The text/plain encoding is not supported by the FormData API.
+    </p>
+    <h3>
+      Enctype: multipart/form-data
+    </h3>
+    <form action="register.php" enctype="multipart/form-data" method="post" onsubmit="AJAXSubmit(this); return false;">
+      <fieldset>
+        <legend>
+          Upload example
+        </legend>
+        <p>
+          First name:
+          <input name="firstname" type="text"/>
+          <br/>
+          Last name:
+          <input name="lastname" type="text"/>
+          <br/>
+          Sex:
+          <input id="sex_male" name="sex" type="radio" value="male"/>
+          <label for="sex_male">
+            Male
+          </label>
+          <input id="sex_female" name="sex" type="radio" value="female"/>
+          <label for="sex_female">
+            Female
+          </label>
+          <br/>
+          Password:
+          <input name="secret" type="password"/>
+          <br/>
+          What do you prefer:
+          <select name="image_type">
+            <option>
+              Books
+            </option>
+            <option>
+              Cinema
+            </option>
+            <option>
+              TV
+            </option>
+          </select>
+        </p>
+        <p>
+          Post your photos:
+          <input multiple="" name="photos[]" type="file">
+          </input>
+        </p>
+        <p>
+          <input id="vehicle_bike" name="vehicle[]" type="checkbox" value="Bike"/>
+          <label for="vehicle_bike">
+            I have a bike
+          </label>
+          <br/>
+          <input id="vehicle_car" name="vehicle[]" type="checkbox" value="Car"/>
+          <label for="vehicle_car">
+            I have a car
+          </label>
+        </p>
+        <p>
+          Describe yourself:
+          <br/>
+          <textarea cols="50" name="description" rows="8">
+          </textarea>
+        </p>
+        <p>
+          <input type="submit" value="Submit"/>
+        </p>
+      </fieldset>
+    </form>
+  </body>
+</html>
