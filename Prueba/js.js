@@ -1,26 +1,37 @@
 var enviar = document.getElementById('enviar');
+var nombre = document.getElementById('nombre');
+var edad = document.getElementById('edad');
 
-enviar.addEventListener('click', loadDoc, false);
+// enviar.addEventListener('click', showHint('Carlos', 38), false);
 
-function loadDoc() {
+enviar.onclick = function() {
 
-    var nombre = document.getElementById('nombre');
-    var edad = document.getElementById('edad');
-    var data = {
-        nombre: nombre.value,
-        edad: edad.value
-    }
+    showHint(nombre.value, edad.value);
+};
 
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
+function showHint(x, y) {
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
 
-            console.log(this.response);
+            var mydata = JSON.parse(this.responseText);
+            // console.log(this.responseText.name);
+            // console.log(this.responseText.age);
+            console.log(mydata.name);
+            console.log(mydata.age);
+
+            document.getElementById('display').innerHTML = mydata.name + " estas viejo, tienes " + mydata.age + " años ;)";
+            console.log(this.responseText);
+
         }
     };
-    xhttp.open("POST", "php.php", true);
-    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp.send(data);
-
-    return false
+    xmlhttp.open("GET", "php.php?nombre=" + x + "&edad=" + y, true);
+    xmlhttp.setRequestHeader("Content-type", "json");
+    xmlhttp.send();
 }
+
+// function myFunction(item, index) {
+//     console.log(item);
+//     console.log(index);
+// }
